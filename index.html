@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Lifetime Walk</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f0fdf4;
+      color: #173b2a;
+      text-align: center;
+    }
+    header {
+      background: #166534;
+      color: white;
+      padding: 28px 12px;
+    }
+    main {
+      max-width: 520px;
+      margin: 35px auto;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px #0001;
+    }
+    h1 { margin: 0; }
+    input, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      border-radius: 9px;
+      font-size: 16px;
+    }
+    input { border: 1px solid #bbb; }
+    button {
+      background: #15803d;
+      color: white;
+      border: 0;
+      font-weight: bold;
+    }
+    .distance {
+      font-size: 38px;
+      font-weight: bold;
+      color: #15803d;
+    }
+    footer { padding: 25px; color: #52665a; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🚶 My Lifetime Walk</h1>
+    <p>Your journey. Your distance. Your lifetime.</p>
+  </header>
+  <main>
+    <div class="card">
+      <h2>My Walking Journey</h2>
+      <p>Total distance recorded</p>
+      <div class="distance" id="total">0 km</div>
+      <input id="km" type="number" min="0.01" step="0.01"
+        placeholder="Enter distance in km">
+      <button onclick="addDistance()">Add Walking Distance</button>
+      <p id="message">Start recording your journey today!</p>
+    </div>
+  </main>
+  <footer>Every step counts 🌍</footer>
+  <script>
+    let total = Number(localStorage.getItem('walkTotal') || 0);
+    function display() {
+      document.getElementById('total').textContent =
+        total.toFixed(2) + ' km';
+    }
+    function addDistance() {
+      const input = document.getElementById('km');
+      const km = Number(input.value);
+      if (!Number.isFinite(km) || km <= 0) {
+        document.getElementById('message').textContent =
+          'Please enter a distance greater than zero.';
+        return;
+      }
+      total += km;
+      localStorage.setItem('walkTotal', total);
+      display();
+      input.value = '';
+      document.getElementById('message').textContent =
+        'Distance added successfully!';
+    }
+    display();
+  </script>
+</body>
+</html>
