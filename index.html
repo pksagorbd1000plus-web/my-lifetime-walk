@@ -1,97 +1,164 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Lifetime Walk</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f0fdf4;
-      color: #173b2a;
-      text-align: center;
-    }
-    header {
-      background: #166534;
-      color: white;
-      padding: 28px 12px;
-    }
-    main {
-      max-width: 520px;
-      margin: 35px auto;
-      padding: 20px;
-    }
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 18px;
-      box-shadow: 0 4px 18px #0001;
-    }
-    h1 { margin: 0; }
-    input, button {
-      box-sizing: border-box;
-      width: 100%;
-      padding: 14px;
-      margin-top: 12px;
-      border-radius: 9px;
-      font-size: 16px;
-    }
-    input { border: 1px solid #bbb; }
-    button {
-      background: #15803d;
-      color: white;
-      border: 0;
-      font-weight: bold;
-    }
-    .distance {
-      font-size: 38px;
-      font-weight: bold;
-      color: #15803d;
-    }
-    footer { padding: 25px; color: #52665a; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Lifetime Walk — Walk the World</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f8f5;color:#18352b}
+header{background:#105c43;color:white;padding:24px 16px;text-align:center}
+.logo{font-size:27px;font-weight:800}
+header p{margin:10px 0 0;color:#d9f5e7}
+main{max-width:850px;margin:auto;padding:18px}
+.card{background:white;padding:20px;border-radius:18px;margin:16px 0;box-shadow:0 4px 18px #163d2510}
+h2{margin-top:0;font-size:21px}
+.hero{text-align:center;background:#dff5e7}
+.hero h1{font-size:29px;line-height:1.3}
+.big{font-size:38px;font-weight:800;color:#08794e;margin:12px}
+button{background:#08794e;color:white;border:0;padding:13px 17px;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer;margin:5px 3px}
+button.secondary{background:#e5f2ea;color:#14583d}
+input{width:100%;padding:13px;border:1px solid #ccd9d0;border-radius:10px;font-size:16px;margin:8px 0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:#f0f8f2;padding:14px;border-radius:12px;text-align:center}
+.stat strong{display:block;font-size:22px;color:#08794e;margin-bottom:5px}
+small,.note{color:#60766a;line-height:1.5}
+table{width:100%;border-collapse:collapse}
+td,th{text-align:left;padding:11px 5px;border-bottom:1px solid #e6eee8}
+footer{text-align:center;padding:24px;color:#60766a}
+#status{white-space:pre-line;font-size:14px;color:#52685c}
+</style>
 </head>
 <body>
-  <header>
-    <h1>🚶 My Lifetime Walk</h1>
-    <p>Your journey. Your distance. Your lifetime.</p>
-  </header>
-  <main>
-    <div class="card">
-      <h2>My Walking Journey</h2>
-      <p>Total distance recorded</p>
-      <div class="distance" id="total">0 km</div>
-      <input id="km" type="number" min="0.01" step="0.01"
-        placeholder="Enter distance in km">
-      <button onclick="addDistance()">Add Walking Distance</button>
-      <p id="message">Start recording your journey today!</p>
+<header>
+  <div class="logo">🌍 My Lifetime Walk</div>
+  <p>Every step counts. Walk your lifetime journey.</p>
+</header>
+<main>
+  <section class="card hero">
+    <h1>তোমার জীবনের প্রতিটি পদক্ষেপের হিসাব রাখো!</h1>
+    <p>তুমি জীবনে মোট কত কিলোমিটার হেঁটেছ? আজ থেকেই হিসাব শুরু করো।</p>
+    <div class="big" id="total">0.00 km</div>
+    <p>তোমার এই ডিভাইসে সংরক্ষিত মোট দূরত্ব</p>
+  </section>
+
+  <section class="card">
+    <h2>📊 তোমার হাঁটার হিসাব</h2>
+    <div class="row">
+      <div class="stat"><strong id="sessions">0</strong>রেকর্ড</div>
+      <div class="stat"><strong id="average">0.00</strong>প্রতি রেকর্ডে km</div>
     </div>
-  </main>
-  <footer>Every step counts 🌍</footer>
-  <script>
-    let total = Number(localStorage.getItem('walkTotal') || 0);
-    function display() {
-      document.getElementById('total').textContent =
-        total.toFixed(2) + ' km';
+  </section>
+
+  <section class="card">
+    <h2>✍️ হাঁটার দূরত্ব যোগ করো</h2>
+    <label for="distance">দূরত্ব (কিলোমিটার)</label>
+    <input id="distance" type="number" min="0.01" max="500" step="0.01" placeholder="যেমন: 2.5">
+    <label for="walkdate">তারিখ</label>
+    <input id="walkdate" type="date">
+    <button onclick="addWalk()">দূরত্ব সংরক্ষণ</button>
+    <p class="note">নিজের হাঁটার দূরত্ব লিখে যোগ করতে পারো।</p>
+  </section>
+
+  <section class="card">
+    <h2>📍 GPS দিয়ে হাঁটা মাপো</h2>
+    <p>ফোনের Location চালু করে হাঁটা শুরু করো। GPS অনুমতি চাইলে Allow দেবে।</p>
+    <div class="big" id="gpsDistance">0.00 km</div>
+    <button onclick="startGPS()">▶ হাঁটা শুরু</button>
+    <button class="secondary" onclick="stopGPS()">■ থামাও ও সংরক্ষণ</button>
+    <p id="status">GPS এখন বন্ধ আছে।</p>
+    <p class="note">GPS ব্যবহারে বাইরে খোলা জায়গায় থাকলে সাধারণত ভালো ফল পাওয়া যায়।</p>
+  </section>
+
+  <section class="card">
+    <h2>🏆 Global Ranking</h2>
+    <p class="note">নিচের নামগুলো শুধু নমুনা। এটি এখনো লাইভ বিশ্ব র‍্যাঙ্কিং নয়।</p>
+    <h3>আনুমানিক র‍্যাঙ্কিং</h3>
+    <table><thead><tr><th>স্থান</th><th>নাম</th><th>দূরত্ব</th></tr></thead>
+    <tbody><tr><td>1</td><td>Sample Walker</td><td>12,500 km</td></tr>
+    <tr><td>2</td><td>World Explorer</td><td>9,800 km</td></tr>
+    <tr><td>3</td><td>Daily Walker</td><td>7,200 km</td></tr></tbody></table>
+    <h3>যাচাই করা র‍্যাঙ্কিং</h3>
+    <p class="note">যাচাইকৃত ব্যবহারকারী এখনো নেই। অ্যাকাউন্ট ও যাচাই ব্যবস্থা পরে যুক্ত হবে।</p>
+  </section>
+  <p class="note">ℹ️ এই প্রাথমিক সংস্করণে রেকর্ড এই ব্রাউজারে সংরক্ষিত হয়। ব্রাউজারের ডেটা মুছে গেলে রেকর্ড হারাতে পারে।</p>
+</main>
+<footer>© My Lifetime Walk · Every step matters 🌱</footer>
+
+<script>
+const KEY = "mlw_walk_records_v1";
+let records = [];
+try { records = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch(e) {}
+let watchId = null, lastPosition = null, gpsMeters = 0;
+
+function saveRecords(){
+  localStorage.setItem(KEY, JSON.stringify(records));
+  render();
+}
+function render(){
+  const total = records.reduce((sum,r)=>sum + r.km,0);
+  document.getElementById("total").textContent = total.toFixed(2)+" km";
+  document.getElementById("sessions").textContent = records.length;
+  document.getElementById("average").textContent =
+    (records.length ? total/records.length : 0).toFixed(2);
+}
+function addWalk(){
+  const field = document.getElementById("distance");
+  const km = Number(field.value);
+  if(!Number.isFinite(km) || km <= 0 || km > 500){
+    alert("০-এর বেশি এবং ৫০০ কিলোমিটারের মধ্যে দূরত্ব লিখো।");
+    return;
+  }
+  records.push({km, date:document.getElementById("walkdate").value || new Date().toISOString().slice(0,10), source:"manual"});
+  saveRecords();
+  field.value = "";
+  alert("দূরত্ব এই ব্রাউজারে সংরক্ষিত হয়েছে।");
+}
+function startGPS(){
+  if(!("geolocation" in navigator)){
+    document.getElementById("status").textContent="এই ব্রাউজারে GPS পাওয়া যাচ্ছে না।";
+    return;
+  }
+  if(watchId !== null) return;
+  gpsMeters = 0; lastPosition = null;
+  document.getElementById("gpsDistance").textContent="0.00 km";
+  document.getElementById("status").textContent="GPS চালু হচ্ছে…";
+  watchId = navigator.geolocation.watchPosition(pos=>{
+    const now = {lat:pos.coords.latitude, lon:pos.coords.longitude};
+    if(lastPosition){
+      const meters = haversine(lastPosition,now);
+      if(meters < 150 && meters > 2) gpsMeters += meters;
     }
-    function addDistance() {
-      const input = document.getElementById('km');
-      const km = Number(input.value);
-      if (!Number.isFinite(km) || km <= 0) {
-        document.getElementById('message').textContent =
-          'Please enter a distance greater than zero.';
-        return;
-      }
-      total += km;
-      localStorage.setItem('walkTotal', total);
-      display();
-      input.value = '';
-      document.getElementById('message').textContent =
-        'Distance added successfully!';
-    }
-    display();
-  </script>
+    lastPosition = now;
+    document.getElementById("gpsDistance").textContent=(gpsMeters/1000).toFixed(2)+" km";
+    document.getElementById("status").textContent="GPS চলছে। হাঁটা শেষ হলে থামাও ও সংরক্ষণ চাপো।";
+  },err=>{
+    document.getElementById("status").textContent="GPS পাওয়া যায়নি। Location চালু করে অনুমতি দাও।";
+  },{enableHighAccuracy:true, maximumAge:1000, timeout:15000});
+}
+function stopGPS(){
+  if(watchId !== null) navigator.geolocation.clearWatch(watchId);
+  watchId = null; lastPosition = null;
+  const km = gpsMeters/1000;
+  if(km >= 0.01){
+    records.push({km, date:new Date().toISOString().slice(0,10), source:"gps"});
+    saveRecords();
+    document.getElementById("status").textContent="GPS রেকর্ড এই ব্রাউজারে সংরক্ষিত হয়েছে।";
+  } else {
+    document.getElementById("status").textContent="GPS সেশন থামানো হয়েছে। সংরক্ষণের মতো দূরত্ব পাওয়া যায়নি।";
+  }
+  gpsMeters = 0;
+}
+function haversine(a,b){
+  const rad = n=>n*Math.PI/180;
+  const dLat=rad(b.lat-a.lat), dLon=rad(b.lon-a.lon);
+  const x=Math.sin(dLat/2)**2+
+    Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dLon/2)**2;
+  return 6371000*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+}
+document.getElementById("walkdate").value = new Date().toISOString().slice(0,10);
+render();
+</script>
 </body>
 </html>
