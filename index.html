@@ -116,40 +116,101 @@ function addWalk(){
   alert("দূরত্ব এই ব্রাউজারে সংরক্ষিত হয়েছে।");
 }
 function startGPS(){
-  if(!("geolocation" in navigator)){
-    document.getElementById("status").textContent="এই ব্রাউজারে GPS পাওয়া যাচ্ছে না।";
+  if(!navigator.geolocation){
+    document.getElementById("status").textContent =
+      "এই ব্রাউজারে GPS পাওয়া যাচ্ছে না।";
     return;
   }
+
   if(watchId !== null) return;
-  gpsMeters = 0; lastPosition = null;
-  document.getElementById("gpsDistance").textContent="0.00 km";
-  document.getElementById("status").textContent="GPS চালু হচ্ছে…";
-  watchId = navigator.geolocation.watchPosition(pos=>{
-    const now = {lat:pos.coords.latitude, lon:pos.coords.longitude};
-    if(lastPosition){
-      const meters = haversine(lastPosition,now);
-      if(meters < 150 && meters > 2) gpsMeters += meters;
+
+  gpsMeters = 0;
+  lastPosition = null;
+
+  document.getElementById("gpsDistance").textContent = "0.00 km";
+  document.getElementById("status").textContent = "GPS চালু হচ্ছে...";
+
+  watchId = navigator.geolocation.watchPosition(
+    pos => {
+      const accuracy = pos.coords.accuracy;
+
+      if(accuracy > 30){
+        document.getElementById("status").textContent =
+          "GPS সিগন্যাল দুর্বল। খোলা জায়গায় যাও।";
+        return;
+      }
+
+      const now = {
+        lat: pos.coords.latitude,
+        lon: pos.coords.longitude
+      };
+
+      if(lastPosition){
+        const meters = haversine(lastPosition, now);
+
+        if(meters >= 2 && meters <= 100){
+          gpsMeters += meters;
+        }
+      }
+
+      lastPosition = now;
+
+      document.getElementById("gpsDistance").textContent =
+        (gpsMeters / 1000).toFixed(2) + " km";
+
+      document.getElementById("status").textContent =
+        "GPS চলছে। হাঁটা শেষ হলে থামাও ও সংরক্ষণ চাপো।";
+    },
+
+    err => {
+      if(watchId !== null){
+        navigator.geolocation.clearWatch(watchId);
+      }
+
+      watchId = null;
+      lastPosition = null;
+
+      document.getElementById("status").textContent =
+        "GPS পাওয়া যায়নি। Location চালু করে আবার চেষ্টা করো।";
+    },
+
+    {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 20000
     }
-    lastPosition = now;
-    document.getElementById("gpsDistance").textContent=(gpsMeters/1000).toFixed(2)+" km";
-    document.getElementById("status").textContent="GPS চলছে। হাঁটা শেষ হলে থামাও ও সংরক্ষণ চাপো।";
-  },err=>{
-    document.getElementById("status").textContent="GPS পাওয়া যায়নি। Location চালু করে অনুমতি দাও।";
-  },{enableHighAccuracy:true, maximumAge:1000, timeout:15000});
+  );
 }
+
 function stopGPS(){
-  if(watchId !== null) navigator.geolocation.clearWatch(watchId);
-  watchId = null; lastPosition = null;
-  const km = gpsMeters/1000;
-  if(km >= 0.01){
-    records.push({km, date:new Date().toISOString().slice(0,10), source:"gps"});
-    saveRecords();
-    document.getElementById("status").textContent="GPS রেকর্ড এই ব্রাউজারে সংরক্ষিত হয়েছে।";
-  } else {
-    document.getElementById("status").textContent="GPS সেশন থামানো হয়েছে। সংরক্ষণের মতো দূরত্ব পাওয়া যায়নি।";
+  if(watchId !== null){
+    navigator.geolocation.clearWatch(watchId);
   }
+
+  watchId = null;
+  lastPosition = null;
+
+  const km = gpsMeters / 1000;
+
+  if(km >= 0.01){
+    records.push({
+      km: km,
+      date: new Date().toLocaleDateString("en-CA"),
+      source: "gps"
+    });
+
+    saveRecords();
+
+    document.getElementById("status").textContent =
+      "GPS রেকর্ড সংরক্ষণ হয়েছে।";
+  } else {
+    document.getElementById("status").textContent =
+      "পর্যাপ্ত দূরত্ব পাওয়া যায়নি।";
+  }
+
   gpsMeters = 0;
 }
+  
 function haversine(a,b){
   const rad = n=>n*Math.PI/180;
   const dLat=rad(b.lat-a.lat), dLon=rad(b.lon-a.lon);
